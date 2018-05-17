@@ -1,6 +1,6 @@
 #ifndef __ABORGAN_FILEIO__
 #define __ABORGAN_FILEIO__
 
-void parseFile();
+char *parseFile(char argv[]);
 
 #endif
