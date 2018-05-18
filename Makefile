@@ -1,8 +1,10 @@
 odir = obj/
 src = src/
 header = header/
-objs = $(odir)main.o $(odir)fileIO.o
+objs = $(odir)main.o $(odir)fileIO.o $(odir)cpp2c.o
 flags = -Wall -std=c11 -I$(header)
+file = assets/first
+prog = cpp2c
 
 all : cpp2c
 
@@ -15,5 +17,15 @@ $(odir)main.o : $(src)main.c
 $(odir)fileIO.o : $(src)fileIO.c $(header)fileIO.h
 	gcc $(flags) -c $< -o $@
 
+$(odir)cpp2c.o : $(src)cpp2c.c $(header)cpp2c.h
+	gcc $(flags) -c $< -o $@
+
+run :
+	./$(prog) $(file).cpp $(file).c
+	gnome-terminal -- vim $(shell pwd)/$(file).c
+
+valgrind :
+	valgrind ./$(prog) $(file).cpp $(file).c
+
 clean :
-	rm $(odir)*.o cpp2c
+	rm $(odir)*.o $(prog) assets/*.c
