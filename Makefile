@@ -2,7 +2,7 @@ odir = obj/
 src = src/
 header = header/
 objs = $(odir)main.o $(odir)fileIO.o $(odir)cpp2c.o
-flags = -Wall -std=c11 -I$(header)
+flags = -Wall -std=c11 -I$(header) -g
 file = assets/first
 prog = cpp2c
 
@@ -11,7 +11,7 @@ all : cpp2c
 cpp2c : $(objs)
 	gcc $(flags) $(objs) -o $@
 
-$(odir)main.o : $(src)main.c
+$(odir)main.o : $(src)main.c $(header)fileIO.h $(header)cpp2c.h
 	gcc $(flags) -c $< -o $@
 
 $(odir)fileIO.o : $(src)fileIO.c $(header)fileIO.h
@@ -25,7 +25,7 @@ run :
 	gnome-terminal -- vim $(shell pwd)/$(file).c
 
 valgrind :
-	valgrind ./$(prog) $(file).cpp $(file).c
+	valgrind --leak-check=full --track-origins=yes ./$(prog) $(file).cpp $(file).c
 
 clean :
 	rm $(odir)*.o $(prog) assets/*.c

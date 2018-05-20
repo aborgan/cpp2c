@@ -10,8 +10,22 @@ class Geeks
     {
         cout << "Destructor called for id: " << id <<endl; 
     }
+
+    class Books {
+    };
 };
  
+class Geeks3 {
+  public:
+  int id;
+};
+
+/*
+ *
+ * class BlockComment
+ *
+ */
+//class Comment {}
 int main() 
   {
      

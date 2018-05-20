@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "fileIO.h"
+#include "cpp2c.h"
 
 int main(int argc, char *argv[]) {
   char *cpp;
@@ -26,12 +27,13 @@ int main(int argc, char *argv[]) {
     return 2;
   }
 
+  cpp = classToStruct(cpp);
+
   if(outFileName) {
     writeFile(outFileName, cpp);
   } else {
     writeFile("assets/out.c", cpp);
   }
-  printf("FILE CONTENTS:\n%s", cpp);
   free(cpp);
   return 0;
 }

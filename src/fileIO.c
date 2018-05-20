@@ -27,7 +27,7 @@ char *parseFile(char *fileName) {
     while((c = fgetc(fp)) != EOF) {
       string[index++] = (char)c;
     }
-    string[index] = '\0';
+    string[index-1] = '\0';
     
     fclose(fp);
     return string;
