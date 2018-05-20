@@ -5,10 +5,7 @@ class Geeks
     public:
     int id;
      
-    //Definition for Destructor
-    ~Geeks()
-    {
-        cout << "Destructor called for id: " << id <<endl; 
+    void testMethod() {
     }
 
     class Books {

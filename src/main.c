@@ -4,6 +4,8 @@
 
 #include "fileIO.h"
 #include "cpp2c.h"
+#include "memberFunction.h"
+#include "class.h"
 
 int main(int argc, char *argv[]) {
   char *cpp;
