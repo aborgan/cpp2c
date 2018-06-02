@@ -1,7 +1,7 @@
 odir = obj/
 src = src/
 header = header/
-objs = $(odir)main.o $(odir)fileIO.o $(odir)cpp2c.o $(odir)class.o $(odir)memberFunction.o
+objs = $(odir)main.o $(odir)fileIO.o $(odir)cpp2c.o $(odir)class.o $(odir)function.o
 flags = -Wall -std=c11 -I$(header) -g
 file = assets/first
 prog = cpp2c
@@ -23,7 +23,7 @@ $(odir)cpp2c.o : $(src)cpp2c.c $(header)cpp2c.h
 $(odir)class.o : $(src)class.c $(header)class.h $(header)cpp2c.h
 	gcc $(flags) -c $< -o $@
 
-$(odir)memberFunction.o : $(src)memberFunction.c $(header)memberFunction.h $(header)cpp2c.h
+$(odir)function.o : $(src)function.c $(header)function.h $(header)cpp2c.h
 	gcc $(flags) -c $< -o $@
 
 run :

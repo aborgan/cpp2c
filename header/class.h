@@ -1,7 +1,7 @@
 #ifndef __ABORGAN_CLASS__
 #define __ABORGAN_CLASS__
 
-#include <memberFunction.h>
+#include <function.h>
 
 typedef struct Class {
   int classNameLength;
@@ -10,7 +10,7 @@ typedef struct Class {
   char *classEnd;
   char *className;
   int numMemberFunctions;
-  MemberFunction **memberFunctions;
+  Function **memberFunctions;
 
 }Class;
 
@@ -21,6 +21,6 @@ char *classToStruct(char *cpp);
 char *replaceStruct(char *cpp, Class *myClass);
 char *skipInnerClass(char *ptr);
 int getNumMemberFunctions(char *classStart, char *classEnd);
-MemberFunction **getMemberFunctions(Class *myClass);
+Function **getMemberFunctions(Class *myClass);
 
 #endif

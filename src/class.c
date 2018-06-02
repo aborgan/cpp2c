@@ -92,7 +92,7 @@ void freeClass(Class *myClass) {
   if(myClass->numMemberFunctions && myClass->memberFunctions) {
     for(int i = 0; i < myClass->numMemberFunctions; i++) {
       if(myClass->memberFunctions[i]) {
-        freeMemberFunction(myClass->memberFunctions[i]);
+        freeFunction(myClass->memberFunctions[i]);
       }
     }
   }
@@ -234,8 +234,8 @@ int getNumMemberFunctions(char *classStart, char *classEnd) {
 }
 
 
-MemberFunction **getMemberFunctions(Class *myClass) {
-  MemberFunction **myMemFuncArr;
+Function **getMemberFunctions(Class *myClass) {
+  Function **myMemFuncArr;
   int count = 0;
   char *ptr = myClass->classStart;
 
@@ -256,7 +256,7 @@ MemberFunction **getMemberFunctions(Class *myClass) {
     return NULL;
   }
 
-  myMemFuncArr = malloc(sizeof(MemberFunction *)*myClass->numMemberFunctions);
+  myMemFuncArr = malloc(sizeof(Function *)*myClass->numMemberFunctions);
   if(!myMemFuncArr) { 
     printf("getMemberFunctions Error: couldn't allocate memory for myMemFuncArr\n");
     return NULL;
@@ -273,11 +273,11 @@ MemberFunction **getMemberFunctions(Class *myClass) {
       }
     }
     if(isFunction(ptr)) {
-      myMemFuncArr[count] = newMemberFunction(ptr);
+      myMemFuncArr[count] = newFunction(ptr);
       if(!myMemFuncArr[count]) {
         printf("getMemberFunctions error: couldn't get new memberFunction\n");
 	for(int i = 0; i < count; i++) {
-	  freeMemberFunction(myMemFuncArr[i]);
+	  freeFunction(myMemFuncArr[i]);
 	}
 	free(myMemFuncArr);
 	return NULL;

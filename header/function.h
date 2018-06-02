@@ -1,23 +1,23 @@
 #ifndef __ABORGAN_MEMBERFUNCTION__
 #define __ABORGAN_MEMBERFUNCTION__
 
-typedef struct MemberFunction {
+typedef struct Function {
   char *returnType;
-  char *memberFunctionName;
-  char *memberFunctionNewName;
+  char *functionName;
+  char *functionNewName;
   char **parameters;
   int numParameters;
   char *functionBody;
 
-}MemberFunction;
+}Function;
 
-MemberFunction *newMemberFunction(char *myFunction);
+Function *newFunction(char *myFunction);
 char *getReturnType(char *myFunction);
 char *getFunctionName(char *myFunction);
 int getNumParameters(char *myFunction);
 char **getParameters(char *myFunction, int numParameters);
-char *adjustMemberFunctionName(MemberFunction *myFunction);
+char *adjustFunctionName(Function *myFunction);
 char *getFunctionBody(char *myFunction);
-void freeMemberFunction(MemberFunction *myFunction);
+void freeFunction(Function *myFunction);
 
 #endif

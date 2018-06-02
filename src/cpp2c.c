@@ -4,7 +4,6 @@
 #include <ctype.h>
 
 #include <cpp2c.h>
-#include <memberFunction.h>
 #include <class.h>
 
 int isKeyWord(char *cpp, char *word) {

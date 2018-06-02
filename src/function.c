@@ -4,68 +4,68 @@
 #include <ctype.h>
 
 #include <class.h>
-#include <memberFunction.h>
+#include <function.h>
 #include <cpp2c.h>
 
-MemberFunction *newMemberFunction(char *functionStart) {
-  MemberFunction *newMemberFunction;
+Function *newFunction(char *functionStart) {
+  Function *newFunction;
   char *ptr = functionStart;
 
   if(!functionStart) {
-    printf("newMemberFunction Error: no returnType specified\n");
+    printf("newFunction Error: no returnType specified\n");
     return NULL;
   }
 
-  newMemberFunction = malloc(sizeof(MemberFunction));
-  if(!newMemberFunction) {
-    printf("newMemberFunction Error: malloc error for newMemberFunction\n");
+  newFunction = malloc(sizeof(Function));
+  if(!newFunction) {
+    printf("newFunction Error: malloc error for newFunction\n");
     return NULL;
   }
-  newMemberFunction->returnType = NULL;
-  newMemberFunction->memberFunctionName = NULL;
-  newMemberFunction->memberFunctionNewName = NULL;
-  newMemberFunction->parameters = NULL;
-  newMemberFunction->numParameters = 0;
-  newMemberFunction->functionBody = NULL;
+  newFunction->returnType = NULL;
+  newFunction->functionName = NULL;
+  newFunction->functionNewName = NULL;
+  newFunction->parameters = NULL;
+  newFunction->numParameters = 0;
+  newFunction->functionBody = NULL;
 
-  newMemberFunction->returnType = getReturnType(ptr);
-  if(!newMemberFunction->returnType) {     
-    printf("newMemberFunction Error: error in return type\n");
-    freeMemberFunction(newMemberFunction);
+  newFunction->returnType = getReturnType(ptr);
+  if(!newFunction->returnType) {     
+    printf("newFunction Error: error in return type\n");
+    freeFunction(newFunction);
     return NULL;
   }
-  printf("newMemberFunction DEBUGGING: returnType: %s\n", newMemberFunction->returnType);
+  printf("newFunction DEBUGGING: returnType: %s\n", newFunction->returnType);
  
-  newMemberFunction->memberFunctionName = getFunctionName(ptr);
-  if(!newMemberFunction->memberFunctionName) {
-    printf("newMemberFunction Error: error in getFunctionName\n");
-    freeMemberFunction(newMemberFunction);
+  newFunction->functionName = getFunctionName(ptr);
+  if(!newFunction->functionName) {
+    printf("newFunction Error: error in getFunctionName\n");
+    freeFunction(newFunction);
     return NULL;
   }
-  printf("newMemberFunction DEBUGGING: functionName: %s\n", newMemberFunction->memberFunctionName);  
+  printf("newFunction DEBUGGING: functionName: %s\n", newFunction->functionName);  
 
-  newMemberFunction->numParameters = getNumParameters(ptr);
-  printf("newMemberFunction DEBUGGING: numParams: %d\n", newMemberFunction->numParameters);
+  newFunction->numParameters = getNumParameters(ptr);
+  printf("newFunction DEBUGGING: numParams: %d\n", newFunction->numParameters);
 
-  newMemberFunction->parameters = getParameters(ptr, newMemberFunction->numParameters);
-  if(!newMemberFunction->parameters) {
-    printf("newMemberFunction Error: error in getParameters\n");
-    freeMemberFunction(newMemberFunction);
+  newFunction->parameters = getParameters(ptr, newFunction->numParameters);
+  if(!newFunction->parameters) {
+    printf("newFunction Error: error in getParameters\n");
+    freeFunction(newFunction);
     return NULL;
   }
-  for(int i = 0; i < newMemberFunction->numParameters; i++) {
-    printf("newMemberFunction DEBUGGING: param %d: %s\n", i, newMemberFunction->parameters[i]);
+  for(int i = 0; i < newFunction->numParameters; i++) {
+    printf("newFunction DEBUGGING: param %d: %s\n", i, newFunction->parameters[i]);
   }
 
-  newMemberFunction->functionBody = getFunctionBody(ptr);
-  if(!newMemberFunction->functionBody) {
-    printf("newMemberFunction Error: error in getFunctionBody\n");
-    freeMemberFunction(newMemberFunction);
+  newFunction->functionBody = getFunctionBody(ptr);
+  if(!newFunction->functionBody) {
+    printf("newFunction Error: error in getFunctionBody\n");
+    freeFunction(newFunction);
     return NULL;
   }
-  printf("newMemberFunction DEBUGGING: functionBody: %s\n", newMemberFunction->functionBody);
+  printf("newFunction DEBUGGING: functionBody: %s\n", newFunction->functionBody);
 
-  return newMemberFunction;
+  return newFunction;
 }
 
 
@@ -296,23 +296,23 @@ char **getParameters(char *myFunction, int numParameters) {
 }
 
 
-char *adjustMemberFunctionName(MemberFunction *myFunction) {
+char *adjustFunctionName(Function *myFunction) {
   char *adjustedName;
-  if(!myFunction->memberFunctionName) {
-    printf("adjustMemberFunctionName Error: no name specified\n");
+  if(!myFunction->functionName) {
+    printf("adjustFunctionName Error: no name specified\n");
     return NULL;
   } else if(!myFunction->returnType) {
-    printf("adjustMemberFunctionName Error: no return type specified\n");
+    printf("adjustFunctionName Error: no return type specified\n");
     return NULL;
   }
 
-  adjustedName = malloc(1+strlen(myFunction->memberFunctionName)+myFunction->numParameters);
+  adjustedName = malloc(1+strlen(myFunction->functionName)+myFunction->numParameters);
   if(!adjustedName) {
-    printf("adjustMemberFunctionName Error: malloc error for adjustedName\n");
+    printf("adjustFunctionName Error: malloc error for adjustedName\n");
     return NULL;
   }
   strncpy(adjustedName, myFunction->returnType, 1);
-  strncat(adjustedName, myFunction->memberFunctionName, strlen(myFunction->memberFunctionName));
+  strncat(adjustedName, myFunction->functionName, strlen(myFunction->functionName));
   for(int i = 0; i < myFunction->numParameters; i++) {
     strncat(adjustedName, myFunction->parameters[i], 1);
   }
@@ -355,7 +355,7 @@ char *getFunctionBody(char *myFunction) {
   return functionBody;
 }
 
-void freeMemberFunction(MemberFunction *myFunction) {
+void freeFunction(Function *myFunction) {
   if(!myFunction) {
     printf("freeMemberFunction Error: null pointer\n");
     return;
@@ -365,12 +365,12 @@ void freeMemberFunction(MemberFunction *myFunction) {
     free(myFunction->returnType);
   }
 
-  if(myFunction->memberFunctionName) {
-    free(myFunction->memberFunctionName);
+  if(myFunction->functionName) {
+    free(myFunction->functionName);
   }
 
-  if(myFunction->memberFunctionNewName) {
-    free(myFunction->memberFunctionNewName);
+  if(myFunction->functionNewName) {
+    free(myFunction->functionNewName);
   }
 
   if(myFunction->parameters) {
