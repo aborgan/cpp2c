@@ -1,14 +1,26 @@
-#include <bits/stdc++.h>
+#include <stdio.h>
 using namespace std;
 class Geeks
 {
     public:
     int id;
      
-    void testMethod() {
+    void testMethod(int test, int *test2, char test3) {
+      int x = 5;
+      int y = 6;
+      int z = x + y;
+      printf("z: %d\n", z);
+    }
+
+    void testMethod2(int hello) {
+      printf("testing 1 2 3 testing\n");
     }
 
     class Books {
+      public:
+      int test() {
+        printf("skip me first time\n");
+      }
     };
 };
  

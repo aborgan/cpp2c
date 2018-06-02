@@ -4,20 +4,20 @@
 typedef struct MemberFunction {
   char *returnType;
   char *memberFunctionName;
-  int memberFunctionNameLength;
   char *memberFunctionNewName;
   char **parameters;
-  char *parameterStart;
-  char *openingBracket;
-  char *closingBracket;
+  int numParameters;
+  char *functionBody;
 
-  int (*getNumParameters)(char *parameterStart);
-  char *(*adjustMemberFunctionName)(char *memberFunctionName);
 }MemberFunction;
 
-MemberFunction *newMemberFunction();
-void freeMemberFunction();
-int getNumParameters(char *parameterStart);
-char *adjustMemberFunctionName(char *memberFunctionName);
+MemberFunction *newMemberFunction(char *myFunction);
+char *getReturnType(char *myFunction);
+char *getFunctionName(char *myFunction);
+int getNumParameters(char *myFunction);
+char **getParameters(char *myFunction, int numParameters);
+char *adjustMemberFunctionName(MemberFunction *myFunction);
+char *getFunctionBody(char *myFunction);
+void freeMemberFunction(MemberFunction *myFunction);
 
 #endif

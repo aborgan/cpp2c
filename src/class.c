@@ -10,26 +10,36 @@ Class *newClass(char *classStart) {
   Class *newClass;
   char *tmpPtr = classStart;
 
+  if(!classStart) {
+    printf("newClass Error: classStart cannot be NULL\n");
+    return NULL;
+  }
   newClass = malloc(sizeof(Class));
   if(!newClass) {
     printf("newClass Error: malloc error trying to create class\n");
     return NULL;
   }
-  newClass->classStart = classStart;
+  newClass->classStart = NULL;
+  newClass->classNameStart = NULL;
+  newClass->classEnd = NULL;
+  newClass->className = NULL;
+  newClass->memberFunctions = NULL;
   newClass->classNameLength = 0;
-  newClass->setClassName = &setClassName;
+  newClass->numMemberFunctions = 0;
 
+
+  newClass->classStart = classStart;
   tmpPtr+=5;
   while(isspace(*tmpPtr)) {
     tmpPtr++;
   }
   newClass->classNameStart = tmpPtr;
-  while(!isspace(*tmpPtr)) {
+  while(!isspace(*tmpPtr) && !(*tmpPtr == '{')) {
     tmpPtr++;
     newClass->classNameLength++;
   }
 
-  newClass->className = newClass->setClassName(newClass->classNameStart, newClass->classNameLength);
+  newClass->className = setClassName(newClass->classNameStart, newClass->classNameLength);
   if(!newClass->className) {
     freeClass(newClass);
     printf("newClass Error: Can't Find className\n");
@@ -46,6 +56,9 @@ Class *newClass(char *classStart) {
     printf("newClass Error: Can't Find Closing Bracket\n");
     return NULL;
   }
+
+  newClass->numMemberFunctions = getNumMemberFunctions(tmpPtr, newClass->classEnd);
+  newClass->memberFunctions = getMemberFunctions(newClass);
 
   return newClass;
 }
@@ -70,7 +83,22 @@ char *setClassName(char *className, int classNameLength) {
 
 
 void freeClass(Class *myClass) {
-  free(myClass->className);
+  if(!myClass) { 
+    return;
+  }
+  if(myClass->className) {
+    free(myClass->className);
+  }
+  if(myClass->numMemberFunctions && myClass->memberFunctions) {
+    for(int i = 0; i < myClass->numMemberFunctions; i++) {
+      if(myClass->memberFunctions[i]) {
+        freeMemberFunction(myClass->memberFunctions[i]);
+      }
+    }
+  }
+  if(myClass->memberFunctions) {
+    free(myClass->memberFunctions);
+  }
   free(myClass);
 }
 
@@ -84,6 +112,7 @@ char *classToStruct(char *cpp) {
       char *replacementStruct;
       char *tmpPtr = ptr;
       Class *myClass = newClass(tmpPtr);
+
       if(!myClass) {
         free(cpp);
 	printf("classToStruct Error: newClass could not be created\n");
@@ -112,6 +141,7 @@ char *classToStruct(char *cpp) {
 char *replaceStruct(char *cpp, Class *myClass) {
   char *newCpp;
   int length = 0;
+
   if(!cpp) {
     printf("replaceStruct Error: cpp not Defined\n");
     return NULL;
@@ -150,4 +180,111 @@ char *replaceStruct(char *cpp, Class *myClass) {
 
   free(cpp);
   return newCpp;
+}
+
+
+char *skipInnerClass(char *ptr) {
+  char *innerClassEnd;
+
+  if(isKeyWord(ptr, "class")) {
+    while(*ptr != '{') {
+      ptr++;
+    }
+    innerClassEnd = getClosingBracket(ptr);
+    if(!innerClassEnd) {
+      printf("skipInnerClass Error: can't find closing bracket\n");
+      return NULL;
+    }
+    return innerClassEnd;
+  }
+  printf("skipInnerClass Error: input not pointing to keyword \"class\"\n");
+  return NULL;
+}
+
+
+int getNumMemberFunctions(char *classStart, char *classEnd) {
+  char *ptr = classStart;
+  int numFunctions = 0;
+
+  if(!classStart) {
+    printf("getNumMemberFunctions error: classStart can't be NULL\n");
+    return -1;
+  } else if(!classEnd) {
+    printf("getNumMemberFunctions Error: classEnd can't be NULL\n");
+    return -1;
+  } else if(classEnd < classStart) {
+    printf("getNumMemberFunctions Error: classEnd can't be less than classStart\n");
+    return -1;
+  }
+
+  while(ptr != classEnd) {
+    if(isKeyWord(ptr, "class")) {
+      ptr = skipInnerClass(ptr);
+      if(!ptr) {
+        printf("getNumMemberFunctions error: couldn't skip inner class\n");
+        return -1;
+      }
+    }
+    if(isFunction(ptr)) {
+      numFunctions++;
+    }
+    ptr++;
+  }
+  return numFunctions;
+}
+
+
+MemberFunction **getMemberFunctions(Class *myClass) {
+  MemberFunction **myMemFuncArr;
+  int count = 0;
+  char *ptr = myClass->classStart;
+
+  if(myClass->numMemberFunctions < 0) {
+    printf("getMemberFunctions Error: numMemberFunctions must be at least 0\n");
+    return NULL;
+  } else if(myClass->numMemberFunctions == 0) {
+    return NULL;
+  }
+  if(!myClass->classStart) {
+    printf("getMemberFunctions error: classStart can't be NULL\n");
+    return NULL;
+  } else if(!myClass->classEnd) {
+    printf("getMemberFunctions Error: classEnd can't be NULL\n");
+    return NULL;
+  } else if(myClass->classEnd < myClass->classStart) {
+    printf("getMemberFunctions Error: classEnd can't be less than classStart\n");
+    return NULL;
+  }
+
+  myMemFuncArr = malloc(sizeof(MemberFunction *)*myClass->numMemberFunctions);
+  if(!myMemFuncArr) { 
+    printf("getMemberFunctions Error: couldn't allocate memory for myMemFuncArr\n");
+    return NULL;
+  }
+
+  while(ptr != myClass->classEnd) {
+    ptr++;
+    if(isKeyWord(ptr, "class")) {
+      ptr = skipInnerClass(ptr);
+      if(!ptr) {
+        printf("getMemberFunctions error: couldn't skip inner class\n");
+	free(myMemFuncArr);
+        return NULL;
+      }
+    }
+    if(isFunction(ptr)) {
+      myMemFuncArr[count] = newMemberFunction(ptr);
+      if(!myMemFuncArr[count]) {
+        printf("getMemberFunctions error: couldn't get new memberFunction\n");
+	for(int i = 0; i < count; i++) {
+	  freeMemberFunction(myMemFuncArr[i]);
+	}
+	free(myMemFuncArr);
+	return NULL;
+      }
+      count++;
+    }
+  }
+
+  return myMemFuncArr;
 }

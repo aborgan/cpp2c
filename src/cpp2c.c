@@ -11,8 +11,29 @@ int isKeyWord(char *cpp, char *word) {
   if(!cpp||!word) {
     return 0;
   }
+  if(!strcmp(word, "void") || !strcmp(word, "int") || !strcmp(word, "bool") || !strcmp(word, "char") || !strcmp(word, "float") || !strcmp(word, "double")){
+    return (!strncmp(word, cpp, strlen(word)) && isspace(*(cpp-1)) && (isspace(*(cpp+strlen(word))) || *(cpp+strlen(word)) == '*' ));
+  }
+
   return (!strncmp(word, cpp, strlen(word)) && isspace(*(cpp-1)) && isspace(*(cpp+strlen(word))));
 }
+
+
+int isFunction(char *functionStart) {
+  char *ptr = functionStart;
+  if(isKeyWord(ptr, "void") || isKeyWord(ptr, "int") || isKeyWord(ptr, "bool") || isKeyWord(ptr, "char") || isKeyWord(ptr, "float") || isKeyWord(ptr, "double")) {
+    while(*ptr != '(' && *ptr != ';' && *ptr != '\0') {
+      ptr++;
+    }
+    if(*ptr != '(') {
+      return 0;
+    } else {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 
 char *getClosingBracket(char *openingBracket) {
   if(!openingBracket) {
@@ -39,6 +60,7 @@ char *getClosingBracket(char *openingBracket) {
   }
   return NULL;
 }
+
 
 char *skipComment(char *cpp) {
   if(*cpp == '/') {
